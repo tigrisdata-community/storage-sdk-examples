@@ -1,0 +1,7 @@
+nextjs/node_modules
+nextjs/.env
+nextjs/.env.local
+nextjs/.env.development.local
+nextjs/.env.test.local
+nextjs/.env.production.local
+nextjs/.next
