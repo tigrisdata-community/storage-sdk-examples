@@ -4,9 +4,9 @@ import { config, list, remove } from "@/lib/tigris";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const paginationMarker = searchParams.get('paginationMarker') || undefined;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const paginationMarker = searchParams.get("paginationMarker") || undefined;
 
     const response = await list({
       limit,
@@ -15,15 +15,15 @@ export async function GET(request: Request) {
     });
 
     if (response.error || !response.data) {
-      return NextResponse.json({ 
-        files: [], 
+      return NextResponse.json({
+        files: [],
         pagination: {
           currentPage: page,
           itemsPerPage: limit,
           hasNextPage: false,
           hasPreviousPage: false,
-          paginationToken: null
-        }
+          paginationToken: null,
+        },
       });
     }
 
@@ -35,15 +35,15 @@ export async function GET(request: Request) {
         object.lastModified?.toISOString() || new Date().toISOString(),
     }));
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       files,
       pagination: {
         currentPage: page,
         itemsPerPage: limit,
         hasNextPage: response.data.hasMore || false,
         hasPreviousPage: page > 1,
-        paginationToken: response.data.paginationToken || null
-      }
+        paginationToken: response.data.paginationToken || null,
+      },
     });
   } catch (error) {
     console.error("List files error:", error);

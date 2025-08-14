@@ -12,8 +12,6 @@ export async function POST(request: NextRequest) {
 
     const fileName = file.name;
 
-    console.log({ fileName });
-
     await put(fileName, file, {
       config,
       access: "public",
