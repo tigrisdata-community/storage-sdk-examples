@@ -1,10 +1,10 @@
-# Tigris File Upload Next.js App
+# Tigris Storage SDK / Next.js Example App
 
-A minimal Next.js application for uploading, listing, and deleting files using Tigris storage.
+A minimal Next.js application for uploading, listing, and deleting files using Tigris Storage SDK.
 
 ## Features
 
-- 📁 File upload to Tigris storage
+- 📁 File upload using Tigris storage SDK
 - 📋 List all uploaded files with pagination
 - 🗑️ Delete files from storage
 - 📄 Configurable items per page (5, 10, 20, 50)
@@ -78,10 +78,3 @@ src/
 - `GET /api/files?page=1&limit=10&paginationMarker=token` - List files with pagination
 - `DELETE /api/files?key=filename` - Delete a file
 - `GET /api/download/[key]` - Download a file
-
-## Technologies Used
-
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **@tigrisdata/storage** - Tigris storage client
