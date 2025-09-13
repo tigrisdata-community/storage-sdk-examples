@@ -1,7 +1,10 @@
-nextjs/node_modules
-nextjs/.env
-nextjs/.env.local
-nextjs/.env.development.local
-nextjs/.env.test.local
-nextjs/.env.production.local
 nextjs/.next
+node_modules
+dist
+build
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
