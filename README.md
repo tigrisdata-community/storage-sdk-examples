@@ -1,3 +1,3 @@
-# Storage API Example
+# Tigris Storage SDK Example
 
-This repo contains various examples using Tigris Storage API
+This repo contains various examples using Tigris Storage SDK
