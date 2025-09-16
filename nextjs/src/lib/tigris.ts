@@ -1,4 +1,11 @@
-import { list, get, put, head, remove } from "@tigrisdata/storage";
+import {
+  list,
+  get,
+  put,
+  head,
+  remove,
+  getPresignedUrl,
+} from "@tigrisdata/storage";
 
 if (
   !process.env.NEXT_PUBLIC_TIGRIS_STORAGE_ACCESS_KEY_ID ||
@@ -18,4 +25,4 @@ export const config = {
   endpoint: process.env.NEXT_PUBLIC_TIGRIS_STORAGE_ENDPOINT,
 };
 
-export { list, get, put, head, remove };
+export { list, get, put, head, remove, getPresignedUrl };
