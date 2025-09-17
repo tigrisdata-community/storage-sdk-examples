@@ -4,7 +4,6 @@ import { getPresignedUrl, config } from "@/lib/tigris";
 export async function POST(request: NextRequest) {
   try {
     const { path, method, contentType } = await request.json();
-    console.log(path, contentType);
     const result = await getPresignedUrl(path, {
       method,
       contentType,
