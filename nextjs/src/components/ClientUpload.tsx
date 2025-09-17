@@ -22,10 +22,10 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
 
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
-    const fileNames = fileArray.map(file => file.name);
+    const fileNames = fileArray.map((file) => file.name);
 
     // Track all files that are starting upload
-    setActiveUploads(prev => new Set([...prev, ...fileNames]));
+    setActiveUploads((prev) => new Set([...prev, ...fileNames]));
 
     const uploadPromises = fileArray.map(async (file) => {
       // Initialize progress
@@ -40,10 +40,9 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
       }));
 
       try {
-        const result = await upload(`uploads/${file.name}`, file, {
+        const result = await upload(`${file.name}`, file, {
           url: "/api/signed",
-          access: "public",
-          addRandomSuffix: true,
+          access: "private",
           onUploadProgress: ({ loaded, total, percentage }) => {
             setProgress((prev) => ({
               ...prev,
@@ -68,7 +67,7 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
         }));
 
         // Remove from active uploads
-        setActiveUploads(prev => {
+        setActiveUploads((prev) => {
           const updated = new Set(prev);
           updated.delete(file.name);
           return updated;
@@ -86,7 +85,7 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
         }));
 
         // Remove from active uploads
-        setActiveUploads(prev => {
+        setActiveUploads((prev) => {
           const updated = new Set(prev);
           updated.delete(file.name);
           return updated;
@@ -102,15 +101,20 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
     // Remove completed uploads after 2 seconds and refresh the list
     setTimeout(() => {
       const successfulUploads = results
-        .filter((result): result is PromiseFulfilledResult<{ success: boolean; filename: string }> =>
-          result.status === 'fulfilled' && result.value.success
+        .filter(
+          (
+            result
+          ): result is PromiseFulfilledResult<{
+            success: boolean;
+            filename: string;
+          }> => result.status === "fulfilled" && result.value.success
         )
-        .map(result => result.value.filename);
+        .map((result) => result.value.filename);
 
       if (successfulUploads.length > 0) {
         setProgress((prev) => {
           const updated = { ...prev };
-          successfulUploads.forEach(filename => {
+          successfulUploads.forEach((filename) => {
             delete updated[filename];
           });
           return updated;
@@ -127,7 +131,10 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="client-upload" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="client-upload"
+            className="block text-sm font-medium text-gray-700"
+          >
             Choose files to upload
           </label>
           <input
@@ -142,19 +149,26 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
         {Object.entries(progress).length > 0 && (
           <div className="space-y-3">
             {Object.entries(progress).map(([filename, prog]) => (
-              <div key={filename} className="border border-gray-200 rounded-lg p-4">
+              <div
+                key={filename}
+                className="border border-gray-200 rounded-lg p-4"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-medium text-gray-900 truncate pr-4">
                     {filename}
                   </h4>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    prog.status === "completed"
-                      ? "bg-green-100 text-green-800"
-                      : prog.status === "error"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-blue-100 text-blue-800"
-                  }`}>
-                    {prog.status === "uploading" ? `${Math.round(prog.percentage)}%` : prog.status}
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      prog.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : prog.status === "error"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    {prog.status === "uploading"
+                      ? `${Math.round(prog.percentage)}%`
+                      : prog.status}
                   </span>
                 </div>
 
@@ -169,7 +183,10 @@ export function ClientUpload({ onUploadSuccess }: ClientUploadProps) {
 
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>
-                    {prog.loaded ? `${(prog.loaded / 1024 / 1024).toFixed(2)} MB` : "0 MB"} / {(prog.total / 1024 / 1024).toFixed(2)} MB
+                    {prog.loaded
+                      ? `${(prog.loaded / 1024 / 1024).toFixed(2)} MB`
+                      : "0 MB"}{" "}
+                    / {(prog.total / 1024 / 1024).toFixed(2)} MB
                   </span>
                   {prog.status === "uploading" && (
                     <span>{Math.round(prog.percentage)}%</span>
