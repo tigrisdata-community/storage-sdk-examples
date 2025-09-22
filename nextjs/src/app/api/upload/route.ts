@@ -1,7 +1,7 @@
+import { getPresignedUrl, put } from "@tigrisdata/storage";
 import { NextRequest, NextResponse } from "next/server";
-import { put, config } from "@/lib/tigris";
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
     const fileName = file.name;
 
     await put(fileName, file, {
-      config,
       access: "public",
       addRandomSuffix: true,
     });
@@ -27,6 +26,25 @@ export async function POST(request: NextRequest) {
     console.error("Upload error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { path, method, contentType } = await request.json();
+    const result = await getPresignedUrl(path, {
+      method,
+      contentType,
+      expiresIn: 3600, // 1 hour
+    });
+
+    return NextResponse.json({ data: result.data });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return NextResponse.json(
+      { error: "Failed to generate presigned URL" },
       { status: 500 }
     );
   }

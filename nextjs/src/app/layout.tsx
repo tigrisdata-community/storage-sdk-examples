@@ -1,18 +1,19 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Tigris File Upload',
-  description: 'File upload application using Tigris storage',
-}
+  title: "Next.js with Tigris Storage SDK",
+  description:
+    "Next.js application using Tigris storage SDK to upload, list, and delete objects",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -21,7 +22,7 @@ export default function RootLayout({
           <header className="bg-white shadow">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
               <h1 className="text-3xl font-bold text-gray-900">
-                Tigris File Upload
+                Next.js with Tigris Storage SDK
               </h1>
             </div>
           </header>
@@ -31,5 +32,5 @@ export default function RootLayout({
         </div>
       </body>
     </html>
-  )
+  );
 }
