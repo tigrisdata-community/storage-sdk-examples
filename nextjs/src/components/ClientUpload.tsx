@@ -31,7 +31,7 @@ export function ClientUpload() {
       }));
 
       try {
-        const result = await upload(`${file.name}`, file, {
+        const { data } = await upload(`${file.name}`, file, {
           url: "/api/upload",
           access: "private",
           onUploadProgress: ({ loaded, total, percentage }) => {
@@ -53,7 +53,7 @@ export function ClientUpload() {
           [file.name]: {
             ...prev[file.name],
             status: "completed",
-            url: result.url,
+            url: data?.url,
           },
         }));
       } catch (error) {
