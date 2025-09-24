@@ -1,11 +1,13 @@
 "use client";
 
 import { formatDate, formatFileSize } from "@/app/utils/formatters";
-import { Item, ListResponse } from "@tigrisdata/storage";
+import { ListResponse } from "@tigrisdata/storage";
 import { useCallback, useEffect, useState } from "react";
 
 export function List() {
-  const [objects, setObjects] = useState<Item[]>([]);
+  const [objects, setObjects] = useState<
+    { id: string; name: string; size: number; lastModified: Date }[]
+  >([]);
   const [nextToken, setNextToken] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [limit] = useState<number>(10);
