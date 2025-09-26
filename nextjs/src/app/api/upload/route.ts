@@ -1,4 +1,11 @@
-import { getPresignedUrl, put } from "@tigrisdata/storage";
+import {
+  getPresignedUrl,
+  put,
+  initMultipartUpload,
+  getPartsPresignedUrls,
+  completeMultipartUpload,
+  UploadAction,
+} from "@tigrisdata/storage";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {
@@ -23,7 +30,6 @@ export async function PUT(request: NextRequest) {
       message: "File uploaded successfully",
     });
   } catch (error) {
-    console.error("Upload error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
       { status: 500 }
@@ -33,18 +39,55 @@ export async function PUT(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { path, method, contentType } = await request.json();
-    const result = await getPresignedUrl(path, {
-      method,
-      contentType,
-      expiresIn: 3600, // 1 hour
-    });
+    const { path, action, contentType, uploadId, parts, partIds } =
+      await request.json();
 
-    return NextResponse.json({ data: result.data });
+    switch (action) {
+      case UploadAction.SinglepartInit: {
+        const result = await getPresignedUrl(path, {
+          contentType,
+          operation: "put",
+          expiresIn: 3600, // 1 hour
+        });
+        return NextResponse.json({ data: result.data });
+      }
+
+      case UploadAction.MultipartInit: {
+        const result = await initMultipartUpload(path, {});
+        return NextResponse.json({ data: result.data });
+      }
+
+      case UploadAction.MultipartGetParts: {
+        if (!uploadId || !parts) {
+          return NextResponse.json(
+            { error: "uploadId and parts are required for multipart-parts" },
+            { status: 400 }
+          );
+        }
+        const result = await getPartsPresignedUrls(path, parts, uploadId, {});
+        return NextResponse.json({ data: result.data });
+      }
+
+      case UploadAction.MultipartComplete: {
+        if (!uploadId) {
+          return NextResponse.json(
+            { error: "uploadId is required for multipart-complete" },
+            { status: 400 }
+          );
+        }
+        const result = await completeMultipartUpload(path, uploadId, partIds);
+        return NextResponse.json({ data: result.data });
+      }
+
+      default:
+        return NextResponse.json(
+          { error: `Unsupported operation: ${action}` },
+          { status: 400 }
+        );
+    }
   } catch (error) {
-    console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Failed to generate presigned URL" },
+      { error: "Failed to process upload request" },
       { status: 500 }
     );
   }

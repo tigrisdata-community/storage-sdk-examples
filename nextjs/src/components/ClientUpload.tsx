@@ -9,16 +9,23 @@ interface UploadProgress {
     status: "uploading" | "completed" | "error";
     url?: string;
     error?: string;
+    isMultipart?: boolean;
+    uploadId?: string;
   };
 }
 
 export function ClientUpload() {
   const [progress, setProgress] = useState<UploadProgress>({});
 
+  // File size threshold for multipart upload (100MB)
+  const MULTIPART_THRESHOLD = 5;
+
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
 
     fileArray.forEach(async (file) => {
+      const isMultipart = file.size > MULTIPART_THRESHOLD * 1024 * 1024;
+
       // Initialize progress
       setProgress((prev) => ({
         ...prev,
@@ -27,14 +34,27 @@ export function ClientUpload() {
           loaded: 0,
           total: file.size,
           status: "uploading",
+          isMultipart,
         },
       }));
 
       try {
-        const { data } = await upload(`${file.name}`, file, {
+        // Use upload function with multipart option for large files
+        const result = await upload(`${file.name}`, file, {
           url: "/api/upload",
           access: "private",
-          onUploadProgress: ({ loaded, total, percentage }) => {
+          multipart: isMultipart,
+          partSize: isMultipart ? 1 * 1024 * 1024 : undefined, // 10MB parts for multipart
+          onUploadProgress: ({
+            loaded,
+            total,
+            percentage,
+          }: {
+            loaded: number;
+            total: number;
+            percentage: number;
+          }) => {
+            console.log({ loaded, total, percentage });
             setProgress((prev) => ({
               ...prev,
               [file.name]: {
@@ -47,16 +67,19 @@ export function ClientUpload() {
           },
         });
 
+        console.log({ result });
+
         // Mark as completed
         setProgress((prev) => ({
           ...prev,
           [file.name]: {
             ...prev[file.name],
             status: "completed",
-            url: data?.url,
+            url: result.data?.url,
           },
         }));
       } catch (error) {
+        console.error(`Upload error for ${file.name}:`, error);
         setProgress((prev) => ({
           ...prev,
           [file.name]: {
@@ -71,7 +94,11 @@ export function ClientUpload() {
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-6">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Client Uploads</h2>
+      <h2 className="text-lg font-medium text-gray-900 mb-2">Client Uploads</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Files larger than {MULTIPART_THRESHOLD}MB will use multipart upload
+        automatically
+      </p>
 
       <div className="space-y-4 flex">
         <div className="w-1/2">
@@ -99,9 +126,16 @@ export function ClientUpload() {
                   className="border border-gray-200 rounded-lg p-4"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-medium text-gray-900 truncate pr-4">
-                      {filename}
-                    </h4>
+                    <div className="flex flex-col">
+                      <h4 className="text-sm font-medium text-gray-900 truncate pr-4">
+                        {filename}
+                      </h4>
+                      {prog.isMultipart && (
+                        <span className="text-xs text-gray-500 mt-1">
+                          Multipart Upload
+                        </span>
+                      )}
+                    </div>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         prog.status === "completed"
