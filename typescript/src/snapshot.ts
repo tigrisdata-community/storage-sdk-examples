@@ -11,7 +11,7 @@ if (list.error) {
 
 // Create a new snapshot
 const result = await createBucketSnapshot("llm-base", {
-  description: "fine-tuned-xxxx", // optional description of the snapshot
+  name: "fine-tuned-xxxx", // optional name of the snapshot
 });
 
 if (result.error) {
