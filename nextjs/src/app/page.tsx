@@ -3,6 +3,7 @@
 import { List } from "@/components/List";
 import { Upload } from "@/components/Upload";
 import { ClientUpload } from "@/components/ClientUpload";
+import { BucketList } from "@/components/BucketList";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Upload />
       <ClientUpload />
       <List />
+      <BucketList />
     </div>
   );
 }
