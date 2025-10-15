@@ -1,3 +1,4 @@
+import { formatDate } from "@/app/utils/formatters";
 import { Bucket } from "@tigrisdata/storage";
 import { useEffect, useState } from "react";
 
@@ -18,6 +19,20 @@ export function BucketList() {
   useEffect(() => {
     fetchBuckets();
   }, []);
+
+  const handleDelete = async (name: string) => {
+    if (!confirm("Are you sure you want to delete this bucket?")) {
+      return;
+    }
+
+    await fetch(`/api/bucket/${encodeURIComponent(name)}`, {
+      method: "DELETE",
+    });
+
+    setBuckets((existingBuckets) =>
+      existingBuckets.filter((bucket) => bucket.name !== name)
+    );
+  };
 
   return (
     <div className="bg-white shadow rounded-lg mt-6">
@@ -45,9 +60,17 @@ export function BucketList() {
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {bucket.name}
                   </p>
+                  <span className="flex items-center space-x-4 text-sm text-gray-500">
+                    {formatDate(bucket.creationDate.toString())}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span>{bucket.creationDate.toString()}</span>
+                  <button
+                    onClick={() => handleDelete(bucket.name)}
+                    className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}
