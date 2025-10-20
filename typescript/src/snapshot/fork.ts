@@ -2,7 +2,7 @@ import { createBucket } from "@tigrisdata/storage";
 
 const fork = await createBucket("llm-base-fork", {
   sourceBucketName: "llm-base", // source bucket name
-  sourceBucketSnapshot: "1760701474278618710", // optional, snapshot version of source bucket
+  sourceBucketSnapshot: "1760701474278618710", // optional snapshot version of the source bucket
 });
 
 if (fork.error) {
