@@ -41,7 +41,10 @@ export function List() {
       if (response.ok) {
         setLoading(false);
         const data: ListResponse = await response.json();
-        setObjects((existingObjects) => existingObjects.concat(data.items));
+        // Reset objects on initial load, concatenate on pagination
+        setObjects((existingObjects) =>
+          paginationToken ? existingObjects.concat(data.items) : data.items
+        );
         setNextToken(data.paginationToken ?? undefined);
       } else {
         console.error("Failed to fetch objects");
