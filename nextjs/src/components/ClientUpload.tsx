@@ -54,7 +54,6 @@ export function ClientUpload() {
             total: number;
             percentage: number;
           }) => {
-            console.log({ loaded, total, percentage });
             setProgress((prev) => ({
               ...prev,
               [file.name]: {
@@ -67,17 +66,26 @@ export function ClientUpload() {
           },
         });
 
-        console.log({ result });
-
-        // Mark as completed
-        setProgress((prev) => ({
-          ...prev,
-          [file.name]: {
-            ...prev[file.name],
-            status: "completed",
-            url: result.data?.url,
-          },
-        }));
+        if (result.error) {
+          setProgress((prev) => ({
+            ...prev,
+            [file.name]: {
+              ...prev[file.name],
+              status: "error",
+              error: result.error.message,
+            },
+          }));
+        } else {
+          setProgress((prev) => ({
+            ...prev,
+            [file.name]: {
+              ...prev[file.name],
+              percentage: 100,
+              status: "completed",
+              url: result.data?.url,
+            },
+          }));
+        }
       } catch (error) {
         console.error(`Upload error for ${file.name}:`, error);
         setProgress((prev) => ({

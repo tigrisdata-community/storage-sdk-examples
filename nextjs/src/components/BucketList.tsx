@@ -1,10 +1,12 @@
 import { formatDate } from "@/app/utils/formatters";
-import { Bucket } from "@tigrisdata/storage";
+import type { Bucket } from "@tigrisdata/storage";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function BucketList() {
   const [buckets, setBuckets] = useState<Bucket[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchBuckets = async () => {
     const response = await fetch("/api/bucket");
@@ -34,6 +36,10 @@ export function BucketList() {
     );
   };
 
+  const handleView = (name: string) => {
+    router.push(`/buckets/${name}`);
+  };
+
   return (
     <div className="bg-white shadow rounded-lg mt-6">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -53,8 +59,9 @@ export function BucketList() {
           <div className="divide-y divide-gray-200">
             {buckets.map((bucket) => (
               <div
+                onClick={() => handleView(bucket.name)}
                 key={bucket.name}
-                className="px-6 py-4 flex items-center justify-between"
+                className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
