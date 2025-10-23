@@ -8,10 +8,11 @@ import type {
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+type Snapshot = Omit<ListBucketSnapshotsResponse[number], "creationDate">;
+
 export function BucketDetails({ name }: { name: string }) {
   const [bucketInfo, setBucketInfo] = useState<BucketInfoResponse | null>(null);
-  const [snapshots, setSnapshots] =
-    useState<ListBucketSnapshotsResponse | null>(null);
+  const [snapshots, setSnapshots] = useState<Snapshot[] | null>(null);
 
   const loadInfo = async (name: string) => {
     const response = await fetch(`/api/bucket/${encodeURIComponent(name)}`, {
@@ -56,7 +57,6 @@ export function BucketDetails({ name }: { name: string }) {
           version: data.snapshotVersion,
           name: undefined,
           snapshotName: undefined,
-          creationDate: new Date(Number(data.snapshotVersion) / 1000000),
         },
         ...(snapshots ?? []),
       ]);
@@ -170,7 +170,6 @@ export function BucketDetails({ name }: { name: string }) {
                     {snapshot.name ? ` - (${snapshot.name})` : ""}
                   </span>
                   <span className="text-sm text-gray-500">
-                    {formatDate(snapshot.creationDate?.toString() ?? "")}
                     <button
                       onClick={() => createFork(snapshot.version)}
                       className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2 text-xs"
