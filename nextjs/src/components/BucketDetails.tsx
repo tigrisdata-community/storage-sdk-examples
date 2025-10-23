@@ -2,13 +2,13 @@ import { formatDate } from "@/app/utils/formatters";
 import type {
   BucketInfoResponse,
   ListBucketSnapshotsResponse,
+  CreateBucketSnapshotResponse,
+  CreateBucketResponse,
 } from "@tigrisdata/storage";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function BucketDetails({ name }: { name: string }) {
-  const router = useRouter();
   const [bucketInfo, setBucketInfo] = useState<BucketInfoResponse | null>(null);
   const [snapshots, setSnapshots] =
     useState<ListBucketSnapshotsResponse | null>(null);
@@ -26,7 +26,7 @@ export function BucketDetails({ name }: { name: string }) {
     }
   };
 
-  const loadSnapshots = async (name: string) => {
+  const loadSnapshots = useCallback(async () => {
     const response = await fetch(
       `/api/bucket/${encodeURIComponent(name)}/snapshots`,
       {
@@ -40,7 +40,46 @@ export function BucketDetails({ name }: { name: string }) {
     if (response.ok) {
       setSnapshots(data);
     }
-  };
+  }, [name]);
+
+  const createSnapshot = useCallback(async () => {
+    const response = await fetch(
+      `/api/bucket/${encodeURIComponent(name)}/snapshots`,
+      {
+        method: "POST",
+      }
+    );
+    const data = (await response.json()) as CreateBucketSnapshotResponse;
+    if (response.ok) {
+      setSnapshots((snapshots) => [
+        {
+          version: data.snapshotVersion,
+          name: undefined,
+          snapshotName: undefined,
+          creationDate: new Date(Number(data.snapshotVersion) / 1000000),
+        },
+        ...(snapshots ?? []),
+      ]);
+    }
+  }, [name]);
+
+  const createFork = useCallback(
+    async (version?: string) => {
+      const response = await fetch(
+        `/api/bucket/${encodeURIComponent(name)}/forks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: version ? JSON.stringify({ version }) : "{}",
+        }
+      );
+      const data = (await response.json()) as CreateBucketResponse;
+      console.log("data", data);
+    },
+    [name]
+  );
 
   useEffect(() => {
     loadInfo(name);
@@ -48,17 +87,37 @@ export function BucketDetails({ name }: { name: string }) {
 
   useEffect(() => {
     if (bucketInfo && bucketInfo.isSnapshotEnabled) {
-      loadSnapshots(name);
+      loadSnapshots();
     }
-  }, [bucketInfo, name]);
+  }, [bucketInfo, loadSnapshots]);
 
   return (
     <>
       <div className="bg-white shadow rounded-lg mt-6">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">
             Bucket Details: {name}
           </h2>
+          <p className="text-sm text-gray-500">
+            {bucketInfo?.isSnapshotEnabled ? (
+              <>
+                <button
+                  onClick={createSnapshot}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
+                >
+                  Create Snapshot
+                </button>
+                <button
+                  onClick={() => createFork()}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                >
+                  Create Fork
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
+          </p>
         </div>
         {bucketInfo ? (
           <div className="divide-y divide-gray-200">
@@ -112,6 +171,12 @@ export function BucketDetails({ name }: { name: string }) {
                   </span>
                   <span className="text-sm text-gray-500">
                     {formatDate(snapshot.creationDate?.toString() ?? "")}
+                    <button
+                      onClick={() => createFork(snapshot.version)}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2 text-xs"
+                    >
+                      Fork this snapshot
+                    </button>
                   </span>
                 </div>
               ))}
