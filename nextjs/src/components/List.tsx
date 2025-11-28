@@ -3,8 +3,9 @@
 import { formatDate, formatFileSize } from "@/app/utils/formatters";
 import { ListResponse } from "@tigrisdata/storage";
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export function List() {
+export function List({ bucket }: { bucket?: string }) {
   const [objects, setObjects] = useState<
     { id: string; name: string; size: number; lastModified: Date }[]
   >([]);
@@ -32,6 +33,7 @@ export function List() {
 
       const response = await fetch(
         `/api/list?limit=${limit}` +
+          (bucket ? `&bucketName=${bucket}` : "") +
           (paginationToken ? `&paginationToken=${paginationToken}` : ""),
         {
           method: "GET",
@@ -50,7 +52,7 @@ export function List() {
         console.error("Failed to fetch objects");
       }
     },
-    [limit]
+    [limit, bucket]
   );
 
   useEffect(() => {

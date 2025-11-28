@@ -6,10 +6,14 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") ?? "10");
     const paginationToken = searchParams.get("paginationToken") ?? undefined;
+    const bucket = searchParams.get("bucketName") ?? undefined;
 
     const response = await list({
       limit,
       paginationToken,
+      config: {
+        bucket,
+      },
     });
 
     if (response.error) {

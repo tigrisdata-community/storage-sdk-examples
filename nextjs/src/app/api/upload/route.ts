@@ -5,6 +5,7 @@ export async function PUT(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
+    const bucket = formData.get("bucket") as string;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -15,6 +16,7 @@ export async function PUT(request: NextRequest) {
     await put(fileName, file, {
       access: "public",
       addRandomSuffix: true,
+      ...(bucket ? { config: { bucket } } : {}),
     });
 
     return NextResponse.json({
@@ -33,7 +35,10 @@ export async function PUT(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { data, error } = await handleClientUpload(body);
+    const bucket = request.nextUrl.searchParams.get("bucket") as string;
+    const { data, error } = await handleClientUpload(body, {
+      ...(bucket ? { bucket } : {}),
+    });
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

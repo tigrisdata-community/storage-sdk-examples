@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 
 type Snapshot = Omit<ListBucketSnapshotsResponse[number], "creationDate">;
 
-export function BucketDetails({ name }: { name: string }) {
+export function BucketDetails({ bucket }: { bucket?: string }) {
   const [bucketInfo, setBucketInfo] = useState<BucketInfoResponse | null>(null);
   const [snapshots, setSnapshots] = useState<Snapshot[] | null>(null);
 
@@ -29,7 +29,7 @@ export function BucketDetails({ name }: { name: string }) {
 
   const loadSnapshots = useCallback(async () => {
     const response = await fetch(
-      `/api/bucket/${encodeURIComponent(name)}/snapshots`,
+      `/api/bucket/${encodeURIComponent(bucket as string)}/snapshots`,
       {
         method: "GET",
         headers: {
@@ -41,11 +41,11 @@ export function BucketDetails({ name }: { name: string }) {
     if (response.ok) {
       setSnapshots(data);
     }
-  }, [name]);
+  }, [bucket]);
 
   const createSnapshot = useCallback(async () => {
     const response = await fetch(
-      `/api/bucket/${encodeURIComponent(name)}/snapshots`,
+      `/api/bucket/${encodeURIComponent(bucket as string)}/snapshots`,
       {
         method: "POST",
       }
@@ -61,12 +61,12 @@ export function BucketDetails({ name }: { name: string }) {
         ...(snapshots ?? []),
       ]);
     }
-  }, [name]);
+  }, [bucket]);
 
   const createFork = useCallback(
     async (version?: string) => {
       const response = await fetch(
-        `/api/bucket/${encodeURIComponent(name)}/forks`,
+        `/api/bucket/${encodeURIComponent(bucket as string)}/forks`,
         {
           method: "POST",
           headers: {
@@ -78,12 +78,14 @@ export function BucketDetails({ name }: { name: string }) {
       const data = (await response.json()) as CreateBucketResponse;
       console.log("data", data);
     },
-    [name]
+    [bucket]
   );
 
   useEffect(() => {
-    loadInfo(name);
-  }, [name]);
+    if (bucket) {
+      loadInfo(bucket);
+    }
+  }, [bucket]);
 
   useEffect(() => {
     if (bucketInfo && bucketInfo.isSnapshotEnabled) {
@@ -91,12 +93,16 @@ export function BucketDetails({ name }: { name: string }) {
     }
   }, [bucketInfo, loadSnapshots]);
 
+  if (!bucket) {
+    return <div>Bucket not found</div>;
+  }
+
   return (
     <>
       <div className="bg-white shadow rounded-lg mt-6">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">
-            Bucket Details: {name}
+            Bucket Details: {bucket}
           </h2>
           <p className="text-sm text-gray-500">
             {bucketInfo?.isSnapshotEnabled ? (
