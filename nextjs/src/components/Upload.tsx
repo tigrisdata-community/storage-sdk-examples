@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-export function Upload() {
+interface UploadProps {
+  bucket?: string;
+}
+
+export function Upload({ bucket }: UploadProps) {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
@@ -19,6 +23,10 @@ export function Upload() {
     try {
       const formData = new FormData();
       formData.append("file", file);
+
+      if (bucket) {
+        formData.append("bucket", bucket);
+      }
 
       const response = await fetch("/api/upload", {
         method: "PUT",

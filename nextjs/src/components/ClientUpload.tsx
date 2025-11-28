@@ -14,7 +14,7 @@ interface UploadProgress {
   };
 }
 
-export function ClientUpload() {
+export function ClientUpload({ bucket }: { bucket?: string }) {
   const [progress, setProgress] = useState<UploadProgress>({});
 
   // File size threshold for multipart upload (100MB)
@@ -41,7 +41,7 @@ export function ClientUpload() {
       try {
         // Use upload function with multipart option for large files
         const result = await upload(`${file.name}`, file, {
-          url: "/api/upload",
+          url: `/api/upload?bucket=${bucket}`,
           access: "private",
           multipart: isMultipart,
           partSize: isMultipart ? 1 * 1024 * 1024 : undefined, // 10MB parts for multipart

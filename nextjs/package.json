@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tigrisdata/storage": "^2.4.0",
+    "@tigrisdata/storage": "^2.9.0",
     "autoprefixer": "^10.4.21",
     "next": "^15.4.6",
     "react": "^18",
