@@ -32,11 +32,12 @@ export async function GET(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+    const bucket = request.nextUrl.searchParams.get("bucket") ?? undefined;
 
     if (!id) {
       return NextResponse.json(
@@ -45,7 +46,11 @@ export async function DELETE(
       );
     }
 
-    await remove(decodeURIComponent(id));
+    await remove(decodeURIComponent(id), {
+      config: {
+        ...(bucket ? { bucket } : {}),
+      },
+    });
 
     return NextResponse.json({
       success: true,

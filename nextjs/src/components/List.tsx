@@ -3,7 +3,6 @@
 import { formatDate, formatFileSize } from "@/app/utils/formatters";
 import { ListResponse } from "@tigrisdata/storage";
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 export function List({ bucket }: { bucket?: string }) {
   const [objects, setObjects] = useState<
@@ -13,19 +12,27 @@ export function List({ bucket }: { bucket?: string }) {
   const [loading, setLoading] = useState(true);
   const [limit] = useState<number>(10);
 
-  const handleDelete = useCallback(async (id: string) => {
-    if (!confirm("Are you sure you want to delete this object?")) {
-      return;
-    }
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (!confirm("Are you sure you want to delete this object?")) {
+        return;
+      }
 
-    await fetch(`/api/object/${encodeURIComponent(id)}`, {
-      method: "DELETE",
-    });
+      await fetch(
+        `/api/object/${encodeURIComponent(id)}${
+          bucket ? `?bucket=${bucket}` : ""
+        }`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    setObjects((existingObjects) =>
-      existingObjects.filter((object) => object.id !== id)
-    );
-  }, []);
+      setObjects((existingObjects) =>
+        existingObjects.filter((object) => object.id !== id)
+      );
+    },
+    [bucket]
+  );
 
   const loadObjects = useCallback(
     async (paginationToken?: string) => {

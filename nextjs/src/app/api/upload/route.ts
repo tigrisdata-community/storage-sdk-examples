@@ -35,7 +35,7 @@ export async function PUT(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const bucket = request.nextUrl.searchParams.get("bucket") as string;
+    const bucket = request.nextUrl.searchParams.get("bucket") ?? undefined;
     const { data, error } = await handleClientUpload(body, {
       ...(bucket ? { bucket } : {}),
     });
