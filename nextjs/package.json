@@ -9,21 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tigrisdata/react": "^1.1.0",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@tigrisdata/react": "^1.1.1",
     "@tigrisdata/storage": "^2.10.0",
-    "autoprefixer": "^10.4.21",
-    "next": "^15.4.6",
-    "react": "^18",
-    "react-dom": "^18"
+    "next": "^16.0.7",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "15.4.6",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.7",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^4.1.17",
     "typescript": "^5"
   }
 }
