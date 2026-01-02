@@ -12,7 +12,7 @@
   "description": "Tigris Storage TypeScript Example",
   "dependencies": {
     "@tigrisdata/keyv-tigris": "^1.0.7",
-    "@tigrisdata/storage": "^2.10.0",
+    "@tigrisdata/storage": "^2.10.2",
     "keyv": "^5.5.4"
   },
   "devDependencies": {
