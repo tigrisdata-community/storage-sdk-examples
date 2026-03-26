@@ -11,9 +11,8 @@
   "license": "MIT",
   "description": "Tigris Storage TypeScript Example",
   "dependencies": {
-    "@tigrisdata/keyv-tigris": "^1.1.1",
-    "@tigrisdata/storage": "^2.13.0",
-    "keyv": "^5.6.0"
+    "@tigrisdata/iam": "^1.4.0",
+    "@tigrisdata/storage": "^2.15.6"
   },
   "devDependencies": {
     "@types/node": "^25.3.0",
