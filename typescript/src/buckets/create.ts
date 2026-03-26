@@ -1,11 +1,14 @@
 import { createBucket } from "@tigrisdata/storage";
 
-const result = await createBucket("llm-base", {
-  enableSnapshot: true,
+const { data, error } = await createBucket("llm-base", {
+  locations: {
+    type: "dual",
+    values: ["ams", "fra"],
+  },
 });
 
-if (result.error) {
-  console.error("error creating bucket", result.error);
+if (error) {
+  console.error("error creating bucket", error);
 } else {
-  console.log("bucket created", result.data);
+  console.log("bucket created", data);
 }

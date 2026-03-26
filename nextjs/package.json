@@ -9,12 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@tailwindcss/postcss": "^4.2.0",
     "@tigrisdata/react": "^1.2.1",
     "@tigrisdata/storage": "^2.13.0",
     "next": "^16.1.6",
     "react": "^19",
     "react-dom": "^19"
+=======
+    "@tigrisdata/storage": "^2.15.6",
+    "autoprefixer": "^10.4.21",
+    "next": "^15.4.6",
+    "react": "^18",
+    "react-dom": "^18"
+>>>>>>> 0e036f8 (chore: update examples and packages)
   },
   "devDependencies": {
     "@types/node": "^25",

@@ -1,9 +1,9 @@
 import { getBucketInfo } from "@tigrisdata/storage";
 
-const bucketInfo = await getBucketInfo("llm-base");
+const { data, error } = await getBucketInfo("llm-base");
 
-if (bucketInfo.error) {
-  console.error("error getting bucket info", bucketInfo.error);
+if (error) {
+  console.error("error getting bucket info", error);
 } else {
-  console.log("bucket info", bucketInfo.data);
+  console.log("bucket info", data);
 }
